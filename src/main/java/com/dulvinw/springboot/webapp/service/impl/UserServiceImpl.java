@@ -18,7 +18,7 @@
 
 package com.dulvinw.springboot.webapp.service.impl;
 
-import com.dulvinw.springboot.webapp.UserRepository;
+import com.dulvinw.springboot.webapp.io.repository.UserRepository;
 import com.dulvinw.springboot.webapp.io.entity.UserEntity;
 import com.dulvinw.springboot.webapp.service.UserService;
 import com.dulvinw.springboot.webapp.shared.Utils;

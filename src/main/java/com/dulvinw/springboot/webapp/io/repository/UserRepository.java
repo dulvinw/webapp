@@ -16,7 +16,7 @@
  *  under the License.
  */
 
-package com.dulvinw.springboot.webapp;
+package com.dulvinw.springboot.webapp.io.repository;
 
 import com.dulvinw.springboot.webapp.io.entity.UserEntity;
 import org.springframework.data.repository.CrudRepository;
