@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2020, FinWhaleLabs Inc. (http://www.finwhalelabs.com) All Rights Reserved.
+ *
+ * Author : Dulvin Witharane
+ * Date Created : 25/01/2020, 23:53
+ *
+ */
+
 package com.dulvinw.springboot.webapp;
 
 import org.springframework.boot.SpringApplication;
@@ -15,5 +23,10 @@ public class WebappApplication {
 	@Bean
 	public BCryptPasswordEncoder bCryptPasswordEncoder() {
 		return new BCryptPasswordEncoder();
+	}
+
+	@Bean
+	public SpringApplicationContext springApplicationContext() {
+		return new SpringApplicationContext();
 	}
 }

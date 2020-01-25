@@ -16,12 +16,18 @@
  *  under the License.
  */
 
-package com.dulvinw.springboot.webapp.service;
+package com.dulvinw.springboot.webapp.security;
 
-import com.dulvinw.springboot.webapp.shared.dto.UserDto;
-import org.springframework.security.core.userdetails.UserDetailsService;
+import com.dulvinw.springboot.webapp.SpringApplicationContext;
 
-public interface UserService extends UserDetailsService {
-    UserDto createUser(UserDto user);
-    UserDto getUser(String email);
+public class SecurityConstants {
+    public static final long EXPIRATION_TIME = 864000000;
+    public static final String TOKEN_PREFIX = "Bearer ";
+    public static final String HEADER_STRING = "Authorization";
+    public static final String SIGN_UP_URL = "/users";
+
+    public static String getTokenSecret() {
+        AppProperties appProperties = (AppProperties) SpringApplicationContext.getBean("appProperties");
+        return appProperties.getTokenSecret();
+    }
 }
