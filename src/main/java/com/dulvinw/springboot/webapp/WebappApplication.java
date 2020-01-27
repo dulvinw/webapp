@@ -25,8 +25,8 @@ public class WebappApplication {
 		return new BCryptPasswordEncoder();
 	}
 
-	@Bean
-	public SpringApplicationContext springApplicationContext() {
-		return new SpringApplicationContext();
-	}
+//	@Bean
+//	public SpringApplicationContext springApplicationContext() {
+//		return new SpringApplicationContext();
+//	}
 }
