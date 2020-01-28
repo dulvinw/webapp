@@ -13,9 +13,13 @@ import com.dulvinw.springboot.webapp.service.UserService;
 import com.dulvinw.springboot.webapp.shared.dto.UserDto;
 import com.dulvinw.springboot.webapp.ui.model.request.UserDetailRequestModel;
 import com.dulvinw.springboot.webapp.ui.model.response.ErrorMessages;
+import com.dulvinw.springboot.webapp.ui.model.response.OperationStatusModel;
+import com.dulvinw.springboot.webapp.ui.model.response.RequestOperationName;
+import com.dulvinw.springboot.webapp.ui.model.response.RequestOperationStatus;
 import com.dulvinw.springboot.webapp.ui.model.response.UserRest;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -58,13 +62,25 @@ public class UserController {
         return returnValue;
     }
 
-    @PutMapping
-    public String updateUser() {
-        return "Update User was Called";
+    @PutMapping(path="/{id}")
+    public UserRest updateUser(@RequestBody UserDetailRequestModel userDetails, @PathVariable String id) {
+        UserRest returnValue = new UserRest();
+        UserDto userDto = new UserDto();
+
+        BeanUtils.copyProperties(userDetails, userDto);
+        userDto.setUserId(id);
+        UserDto updateUserResponse = userService.updateUser(userDto);
+
+        BeanUtils.copyProperties(updateUserResponse, returnValue);
+        return returnValue;
     }
 
-    @DeleteMapping
-    public String deleteUser() {
-        return "Delete User was Called";
+    @DeleteMapping(path = "/{id}")
+    public OperationStatusModel deleteUser(@PathVariable String id) {
+        OperationStatusModel returnValue = new OperationStatusModel();
+        returnValue.setOperationName(RequestOperationName.DELETE.name());
+        userService.deleteUser(id);
+        returnValue.setOperationResult(RequestOperationStatus.SUCCESS.name());
+        return returnValue;
     }
 }
