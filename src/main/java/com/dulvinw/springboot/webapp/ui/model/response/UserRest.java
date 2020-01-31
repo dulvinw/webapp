@@ -8,11 +8,22 @@
 
 package com.dulvinw.springboot.webapp.ui.model.response;
 
+import java.util.List;
+
 public class UserRest {
     private String userId;
     private String firstName;
     private String lastName;
     private String email;
+    private List<AddressResponseModel> addresses;
+
+    public List<AddressResponseModel> getAddresses() {
+        return addresses;
+    }
+
+    public void setAddresses(List<AddressResponseModel> addresses) {
+        this.addresses = addresses;
+    }
 
     public String getUserId() {
         return userId;

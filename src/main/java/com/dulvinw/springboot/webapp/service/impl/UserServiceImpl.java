@@ -8,11 +8,13 @@
 
 package com.dulvinw.springboot.webapp.service.impl;
 
+import com.dulvinw.springboot.webapp.io.entity.AddressEntity;
 import com.dulvinw.springboot.webapp.io.repository.UserRepository;
 import com.dulvinw.springboot.webapp.io.entity.UserEntity;
 import com.dulvinw.springboot.webapp.service.UserService;
 import com.dulvinw.springboot.webapp.shared.Utils;
 import com.dulvinw.springboot.webapp.shared.dto.UserDto;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -46,18 +48,25 @@ public class UserServiceImpl implements UserService {
             throw new RuntimeException("Record already exist");
         }
 
-        UserEntity userEntity = new UserEntity();
-        BeanUtils.copyProperties(user, userEntity);
+        ModelMapper modelMapper = new ModelMapper();
+
+        UserEntity userEntity = modelMapper.map(user, UserEntity.class);
 
         String publicUserId = utils.generateUserId(30);
         userEntity.setUserId(publicUserId);
 
         userEntity.setEncryptedPassword(bCryptPasswordEncoder.encode(user.getPassword()));
 
+        for (AddressEntity userAddress:
+             userEntity.getAddresses()) {
+            String publicAddressId = utils.generateAddressId(30);
+            userAddress.setAddressId(publicAddressId);
+            userAddress.setUserDetails(userEntity);
+        }
+
         UserEntity responseFromRepo = userRepository.save(userEntity);
 
-        UserDto returnResults = new UserDto();
-        BeanUtils.copyProperties(responseFromRepo, returnResults);
+        UserDto returnResults = modelMapper.map(responseFromRepo, UserDto.class);
 
         return returnResults;
     }

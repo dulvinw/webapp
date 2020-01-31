@@ -17,9 +17,9 @@ import com.dulvinw.springboot.webapp.ui.model.response.OperationStatusModel;
 import com.dulvinw.springboot.webapp.ui.model.response.RequestOperationName;
 import com.dulvinw.springboot.webapp.ui.model.response.RequestOperationStatus;
 import com.dulvinw.springboot.webapp.ui.model.response.UserRest;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -51,17 +51,15 @@ public class UserController {
 
     @PostMapping
     public UserRest createUser(@RequestBody UserDetailRequestModel userDetail) throws UserServiceException {
-        UserRest returnValue = new UserRest();
-
         if (userDetail.getFirstName().isEmpty()) {
             throw new UserServiceException(ErrorMessages.MISSING_REQUIRED_FIELD.getErrorMessage());
         }
 
-        UserDto userDto = new UserDto();
-        BeanUtils.copyProperties(userDetail, userDto);
+        ModelMapper modelMapper = new ModelMapper();
+        UserDto userDto = modelMapper.map(userDetail, UserDto.class);
 
         UserDto createUser = userService.createUser(userDto);
-        BeanUtils.copyProperties(createUser, returnValue);
+        UserRest returnValue = modelMapper.map(createUser, UserRest.class);
 
         return returnValue;
     }
