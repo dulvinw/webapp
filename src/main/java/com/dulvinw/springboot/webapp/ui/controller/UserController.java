@@ -9,15 +9,19 @@
 package com.dulvinw.springboot.webapp.ui.controller;
 
 import com.dulvinw.springboot.webapp.exceptions.UserServiceException;
+import com.dulvinw.springboot.webapp.service.AddressesService;
 import com.dulvinw.springboot.webapp.service.UserService;
+import com.dulvinw.springboot.webapp.shared.dto.AddressDto;
 import com.dulvinw.springboot.webapp.shared.dto.UserDto;
 import com.dulvinw.springboot.webapp.ui.model.request.UserDetailRequestModel;
+import com.dulvinw.springboot.webapp.ui.model.response.AddressResponseModel;
 import com.dulvinw.springboot.webapp.ui.model.response.ErrorMessages;
 import com.dulvinw.springboot.webapp.ui.model.response.OperationStatusModel;
 import com.dulvinw.springboot.webapp.ui.model.response.RequestOperationName;
 import com.dulvinw.springboot.webapp.ui.model.response.RequestOperationStatus;
 import com.dulvinw.springboot.webapp.ui.model.response.UserRest;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeToken;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -30,6 +34,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.jws.WebParam;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,6 +45,9 @@ public class UserController {
     @Autowired
     UserService userService;
 
+    @Autowired
+    AddressesService addressesService;
+
     @GetMapping(path="/{id}")
     public UserRest getUser(@PathVariable String id) {
         UserRest returnValue = new UserRest();
@@ -47,6 +56,37 @@ public class UserController {
         BeanUtils.copyProperties(user, returnValue);
 
         return returnValue;
+    }
+
+    @GetMapping(path="/{id}/addresses")
+    public List<AddressResponseModel> getUserAddresses(@PathVariable String id) {
+        ModelMapper modelMapper = new ModelMapper();
+        List<AddressResponseModel> returnValue = new ArrayList<>();
+        Type listType = new TypeToken<List<AddressResponseModel>>() {}.getType();
+
+        List<AddressDto> addresses = addressesService.getAddresses(id);
+
+
+        if (addresses != null && !addresses.isEmpty()) {
+            returnValue = modelMapper.map(addresses, listType);
+        }
+
+        return returnValue;
+    }
+
+    @GetMapping(path="/{userId}/addresses/{addressId}")
+    public AddressResponseModel getUserAddress(@PathVariable String userId, @PathVariable String addressId) {
+        ModelMapper modelMapper = new ModelMapper();
+
+        AddressDto address = addressesService.getAddress(userId, addressId);
+
+
+        if (address != null ) {
+            AddressResponseModel returnValue = modelMapper.map(address, AddressResponseModel.class);
+            return returnValue;
+        }
+
+        return new AddressResponseModel();
     }
 
     @PostMapping

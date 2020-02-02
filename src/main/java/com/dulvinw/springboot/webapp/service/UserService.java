@@ -8,6 +8,7 @@
 
 package com.dulvinw.springboot.webapp.service;
 
+import com.dulvinw.springboot.webapp.shared.dto.AddressDto;
 import com.dulvinw.springboot.webapp.shared.dto.UserDto;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
