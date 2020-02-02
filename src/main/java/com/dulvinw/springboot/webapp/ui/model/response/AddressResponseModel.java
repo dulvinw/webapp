@@ -8,7 +8,9 @@
 
 package com.dulvinw.springboot.webapp.ui.model.response;
 
-public class AddressResponseModel {
+import org.springframework.hateoas.RepresentationModel;
+
+public class AddressResponseModel extends RepresentationModel {
     private String city;
     private String country;
     private String streetName;
