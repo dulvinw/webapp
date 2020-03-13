@@ -38,14 +38,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.xml.ws.Response;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 @RestController
 @RequestMapping("/users")
@@ -171,5 +166,21 @@ public class UserController {
             returnValue.add(userRest);
         }
         return returnValue;
+    }
+
+    @GetMapping(path = "/verify")
+    public OperationStatusModel verifyEmail(@RequestParam(name = "token") String token) {
+        OperationStatusModel operationStatusModel = new OperationStatusModel();
+        operationStatusModel.setOperationName(RequestOperationName.VERIFY_EMAIL.name());
+
+        boolean isVerified = userService.verifyEmailToken(token);
+
+        if (isVerified) {
+            operationStatusModel.setOperationResult(RequestOperationStatus.SUCCESS.name());
+        } else {
+            operationStatusModel.setOperationName(RequestOperationStatus.FAILURE.name());
+        }
+
+        return operationStatusModel;
     }
 }

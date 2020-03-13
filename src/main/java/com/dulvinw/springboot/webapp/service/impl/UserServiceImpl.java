@@ -12,6 +12,7 @@ import com.dulvinw.springboot.webapp.io.entity.AddressEntity;
 import com.dulvinw.springboot.webapp.io.repository.UserRepository;
 import com.dulvinw.springboot.webapp.io.entity.UserEntity;
 import com.dulvinw.springboot.webapp.service.UserService;
+import com.dulvinw.springboot.webapp.shared.AmazonSES;
 import com.dulvinw.springboot.webapp.shared.Utils;
 import com.dulvinw.springboot.webapp.shared.dto.AddressDto;
 import com.dulvinw.springboot.webapp.shared.dto.UserDto;
@@ -65,9 +66,14 @@ public class UserServiceImpl implements UserService {
             userAddress.setUserDetails(userEntity);
         }
 
+        userEntity.setEmailVerificationToken(Utils.generateEmailVerificationToken(publicUserId));
+
         UserEntity responseFromRepo = userRepository.save(userEntity);
 
         UserDto returnResults = modelMapper.map(responseFromRepo, UserDto.class);
+
+        AmazonSES amazonSES = new AmazonSES();
+        amazonSES.verifyEmail(returnResults);
 
         return returnResults;
     }
@@ -78,7 +84,8 @@ public class UserServiceImpl implements UserService {
 
         if (userEntity == null) throw new UsernameNotFoundException(email);
 
-        return new User(userEntity.getEmail(), userEntity.getEncryptedPassword(), new ArrayList<>());
+        return new User(userEntity.getEmail(), userEntity.getEncryptedPassword(), userEntity.isEmailVerificationStatus(),
+                true, true, true, new ArrayList<>());
     }
 
     @Override
@@ -145,6 +152,25 @@ public class UserServiceImpl implements UserService {
             UserDto userDto = new UserDto();
             BeanUtils.copyProperties(userEntity, userDto);
             returnValue.add(userDto);
+        }
+
+        return returnValue;
+    }
+
+    @Override
+    public boolean verifyEmailToken(String token) {
+        boolean returnValue = false;
+
+        UserEntity userEntity = userRepository.findByEmailVerificationToken(token);
+
+        if (userEntity != null) {
+            boolean hasExpired = Utils.hasTokenExpired(token);
+            if (!hasExpired) {
+                userEntity.setEmailVerificationToken(null);
+                userEntity.setEmailVerificationStatus(Boolean.TRUE);
+                userRepository.save(userEntity);
+                returnValue = true;
+            }
         }
 
         return returnValue;

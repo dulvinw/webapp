@@ -8,6 +8,9 @@
 
 package com.dulvinw.springboot.webapp.ui.model.response;
 
+import java.nio.file.FileStore;
+
 public enum  RequestOperationStatus {
-    SUCCESS;
+    SUCCESS,
+    FAILURE;
 }
