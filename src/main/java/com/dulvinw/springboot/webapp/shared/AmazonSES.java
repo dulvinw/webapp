@@ -17,7 +17,10 @@ import com.amazonaws.services.simpleemail.model.Destination;
 import com.amazonaws.services.simpleemail.model.Message;
 import com.amazonaws.services.simpleemail.model.SendEmailRequest;
 import com.dulvinw.springboot.webapp.shared.dto.UserDto;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
+@Service
 public class AmazonSES {
     // This address must be verified with Amazon SES.
     final String FROM = "dulvinw@gmail.com";

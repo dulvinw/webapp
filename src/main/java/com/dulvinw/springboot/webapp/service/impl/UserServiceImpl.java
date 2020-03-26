@@ -14,7 +14,6 @@ import com.dulvinw.springboot.webapp.io.entity.UserEntity;
 import com.dulvinw.springboot.webapp.service.UserService;
 import com.dulvinw.springboot.webapp.shared.AmazonSES;
 import com.dulvinw.springboot.webapp.shared.Utils;
-import com.dulvinw.springboot.webapp.shared.dto.AddressDto;
 import com.dulvinw.springboot.webapp.shared.dto.UserDto;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.BeanUtils;
@@ -43,6 +42,9 @@ public class UserServiceImpl implements UserService {
     @Autowired
     BCryptPasswordEncoder bCryptPasswordEncoder;
 
+    @Autowired
+    AmazonSES amazonSES;
+
     @Override
     public UserDto createUser(UserDto user) {
         UserEntity alreadyCreatedUserByEmail = userRepository.findByEmail(user.getEmail());
@@ -66,13 +68,12 @@ public class UserServiceImpl implements UserService {
             userAddress.setUserDetails(userEntity);
         }
 
-        userEntity.setEmailVerificationToken(Utils.generateEmailVerificationToken(publicUserId));
+        userEntity.setEmailVerificationToken(utils.generateEmailVerificationToken(publicUserId));
 
         UserEntity responseFromRepo = userRepository.save(userEntity);
 
         UserDto returnResults = modelMapper.map(responseFromRepo, UserDto.class);
 
-        AmazonSES amazonSES = new AmazonSES();
         amazonSES.verifyEmail(returnResults);
 
         return returnResults;
