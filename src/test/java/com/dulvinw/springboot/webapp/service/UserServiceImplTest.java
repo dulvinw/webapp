@@ -2,11 +2,11 @@
  * Copyright (c) 2020, FinWhaleLabs Inc. (http://www.finwhalelabs.com) All Rights Reserved.
  *
  * Author : Dulvin Witharane
- * Date Created : 11/03/2020, 19:01
+ * Date Created : 27/03/2020, 21:16
  *
  */
 
-import com.dulvinw.springboot.webapp.io.entity.AddressEntity;
+package com.dulvinw.springboot.webapp.service;import com.dulvinw.springboot.webapp.io.entity.AddressEntity;
 import com.dulvinw.springboot.webapp.io.entity.UserEntity;
 import com.dulvinw.springboot.webapp.io.repository.UserRepository;
 import com.dulvinw.springboot.webapp.service.impl.UserServiceImpl;

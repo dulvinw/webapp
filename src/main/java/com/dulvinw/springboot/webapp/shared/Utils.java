@@ -10,6 +10,7 @@ package com.dulvinw.springboot.webapp.shared;
 
 import com.dulvinw.springboot.webapp.security.SecurityConstants;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.stereotype.Component;
@@ -24,13 +25,20 @@ public class Utils {
     private final String ALPHABET = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 
     public static boolean hasTokenExpired(String token) {
-        Claims claims = Jwts.parser()
-                .setSigningKey(SecurityConstants.getTokenSecret())
-                .parseClaimsJws(token).getBody();
-        Date expirationDate = claims.getExpiration();
-        Date today = new Date();
+        boolean returnValue = true;
+        try {
+            Claims claims = Jwts.parser()
+                    .setSigningKey(SecurityConstants.getTokenSecret())
+                    .parseClaimsJws(token).getBody();
+            Date expirationDate = claims.getExpiration();
+            Date today = new Date();
 
-        return expirationDate.before(today);
+            returnValue = expirationDate.before(today);
+        } catch (ExpiredJwtException e) {
+            returnValue = true;
+        }
+
+        return returnValue;
     }
 
     public String generateUserId(int length) {
