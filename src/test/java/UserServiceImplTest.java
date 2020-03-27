@@ -81,7 +81,7 @@ class UserServiceImplTest {
         UserDto user = userServiceImpl.getUser("test@test.com");
 
         assertNotNull(user);
-        assertEquals("asd123", user.getUserId());
+        assertEquals("abc123fix", user.getUserId());
     }
 
     @Test
