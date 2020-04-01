@@ -20,6 +20,7 @@ import com.dulvinw.springboot.webapp.ui.model.response.OperationStatusModel;
 import com.dulvinw.springboot.webapp.ui.model.response.RequestOperationName;
 import com.dulvinw.springboot.webapp.ui.model.response.RequestOperationStatus;
 import com.dulvinw.springboot.webapp.ui.model.response.UserRest;
+import com.sun.org.apache.xpath.internal.operations.Mod;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.BeanUtils;
@@ -56,7 +57,8 @@ public class UserController {
         UserRest returnValue = new UserRest();
         UserDto user = userService.getUserByUserId(id);
 
-        BeanUtils.copyProperties(user, returnValue);
+        ModelMapper mapper = new ModelMapper();
+        returnValue = mapper.map(user, UserRest.class);
 
         return returnValue;
     }
