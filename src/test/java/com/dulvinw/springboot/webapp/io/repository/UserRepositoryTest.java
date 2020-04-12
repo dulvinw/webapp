@@ -25,6 +25,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @SpringBootTest
@@ -104,6 +105,21 @@ public class UserRepositoryTest {
         UserEntity user = userRepository.findUserByUserId(USER_ID);
         assertNotNull(user);
         assertEquals(USER_ID, user.getUserId());
+    }
+
+    @Test
+    public void testGetFirstNameAndLastNameFromUserId() {
+        List<Object[]> user = userRepository.getFirstNameAndLastNameFromUserId(USER_ID);
+        assertNotNull(user);
+        assertEquals(FIRST_NAME, user.get(0)[0]);
+        assertEquals(LAST_NAME, user.get(0)[1]);
+    }
+
+    @Test
+    public void testUpdateEmailVerificationStatusUsingJPQL() {
+        userRepository.updateEmailVerificationStatusFromJPQL(false, USER_ID);
+        UserEntity user = userRepository.findUserByUserId(USER_ID);
+        assertFalse(user.isEmailVerificationStatus());
     }
 
     private List<UserEntity> getMockEntity() {
