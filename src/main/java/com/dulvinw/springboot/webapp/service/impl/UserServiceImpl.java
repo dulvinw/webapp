@@ -9,8 +9,11 @@
 package com.dulvinw.springboot.webapp.service.impl;
 
 import com.dulvinw.springboot.webapp.io.entity.AddressEntity;
+import com.dulvinw.springboot.webapp.io.entity.RoleEntity;
+import com.dulvinw.springboot.webapp.io.repository.RoleRepository;
 import com.dulvinw.springboot.webapp.io.repository.UserRepository;
 import com.dulvinw.springboot.webapp.io.entity.UserEntity;
+import com.dulvinw.springboot.webapp.security.UserPrincipal;
 import com.dulvinw.springboot.webapp.service.UserService;
 import com.dulvinw.springboot.webapp.shared.AmazonSES;
 import com.dulvinw.springboot.webapp.shared.Utils;
@@ -28,6 +31,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -35,6 +39,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     UserRepository userRepository;
+
+    @Autowired
+    RoleRepository roleRepository;
 
     @Autowired
     Utils utils;
@@ -68,13 +75,16 @@ public class UserServiceImpl implements UserService {
             userAddress.setUserDetails(userEntity);
         }
 
+        RoleEntity userRole = roleRepository.findByName("ROLE_USER");
+        userEntity.setRoles(Arrays.asList(userRole));
+
         userEntity.setEmailVerificationToken(utils.generateEmailVerificationToken(publicUserId));
 
         UserEntity responseFromRepo = userRepository.save(userEntity);
 
         UserDto returnResults = modelMapper.map(responseFromRepo, UserDto.class);
 
-        amazonSES.verifyEmail(returnResults);
+//        amazonSES.verifyEmail(returnResults);
 
         return returnResults;
     }
@@ -85,8 +95,7 @@ public class UserServiceImpl implements UserService {
 
         if (userEntity == null) throw new UsernameNotFoundException(email);
 
-        return new User(userEntity.getEmail(), userEntity.getEncryptedPassword(), userEntity.isEmailVerificationStatus(),
-                true, true, true, new ArrayList<>());
+        return new UserPrincipal(userEntity);
     }
 
     @Override
