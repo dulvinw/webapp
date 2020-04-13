@@ -21,6 +21,8 @@ import com.dulvinw.springboot.webapp.ui.model.response.RequestOperationName;
 import com.dulvinw.springboot.webapp.ui.model.response.RequestOperationStatus;
 import com.dulvinw.springboot.webapp.ui.model.response.UserRest;
 import com.sun.org.apache.xpath.internal.operations.Mod;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.BeanUtils;
@@ -54,7 +56,7 @@ public class UserController {
 
     @GetMapping(path="/{id}")
     public UserRest getUser(@PathVariable String id) {
-        UserRest returnValue = new UserRest();
+        UserRest returnValue;
         UserDto user = userService.getUserByUserId(id);
 
         ModelMapper mapper = new ModelMapper();
@@ -129,9 +131,8 @@ public class UserController {
         UserDto userDto = modelMapper.map(userDetail, UserDto.class);
 
         UserDto createUser = userService.createUser(userDto);
-        UserRest returnValue = modelMapper.map(createUser, UserRest.class);
 
-        return returnValue;
+        return modelMapper.map(createUser, UserRest.class);
     }
 
     @PutMapping(path="/{id}")
@@ -156,6 +157,10 @@ public class UserController {
         return returnValue;
     }
 
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "Authorization"
+                    , value = "${userController.authorizationHeader.description}", paramType = "header")
+    })
     @GetMapping
     public List<UserRest> getUsers(@RequestParam(value = "page", defaultValue = "0") int page,
             @RequestParam(value = "limit", defaultValue = "25") int limit) {
